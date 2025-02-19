@@ -3,7 +3,8 @@ pipeline {
     
     environment {
         DOCKER_HUB_REPO = 'shrutisharma1152/flask-app'
-    }
+        REMOTE_HOST = '13.49.75.233'  
+        REMOTE_USER = 'ubuntu'        
     
     stages {
         stage('Checkout') {
@@ -24,7 +25,7 @@ pipeline {
             }
         }
         
-        stage('Deploy') {
+        stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', 
                                                 usernameVariable: 'DOCKER_USER', 
@@ -32,15 +33,17 @@ pipeline {
                     bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
                     bat "docker push %DOCKER_HUB_REPO%:%BUILD_NUMBER%"
                 }
-                
-                bat "docker run -d -p 5000:5000 %DOCKER_HUB_REPO%:%BUILD_NUMBER%"
             }
         }
-    }
-    
-    post {
-        always {
-            bat 'docker logout'
+        
+        stage('Deploy to Remote Server') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'remote-server-ssh',
+                                                 keyFileVariable: 'SSH_KEY')]) {
+                    bat "scp -i %SSH_KEY% docker-compose.yml %REMOTE_USER%@%REMOTE_HOST%:/app"
+                    bat "ssh -i %SSH_KEY% %REMOTE_USER%@%REMOTE_HOST% \"cd /app && docker-compose up -d\""
+                }
+            }
         }
     }
 }
