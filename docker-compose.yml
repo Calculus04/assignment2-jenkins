@@ -1,0 +1,7 @@
+version: '3'
+services:
+  web:
+    image: shrutisharma1152/flask-app:latest
+    ports:
+      - "5000:5000"
+    restart: always
