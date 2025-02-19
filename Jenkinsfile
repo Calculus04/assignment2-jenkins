@@ -41,12 +41,12 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'remote-server-ssh',
                                                  keyFileVariable: 'SSH_KEY')]) {
-                    // Fix permissions on the key file
+                    
                     bat '''
                         icacls %SSH_KEY% /inheritance:r
                         icacls %SSH_KEY% /grant:r "SYSTEM:R"
                     '''
-                    // Deploy using the key
+                   
                     bat "scp -o StrictHostKeyChecking=no -i %SSH_KEY% docker-compose.yml %REMOTE_USER%@%REMOTE_HOST%:/app"
                     bat "ssh -o StrictHostKeyChecking=no -i %SSH_KEY% %REMOTE_USER%@%REMOTE_HOST% \"export BUILD_NUMBER=%BUILD_NUMBER% &&cd /app && docker-compose up -d\""
                 }
