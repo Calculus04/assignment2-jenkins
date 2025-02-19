@@ -48,8 +48,7 @@ pipeline {
                     '''
                    
                     bat "scp -o StrictHostKeyChecking=no -i %SSH_KEY% docker-compose.yml %REMOTE_USER%@%REMOTE_HOST%:/app"
-                    bat "ssh -o StrictHostKeyChecking=no -i %SSH_KEY% %REMOTE_USER%@%REMOTE_HOST% \"export BUILD_NUMBER=%BUILD_NUMBER% &&cd /app && docker-compose up -d\""
-                }
+                    bat "ssh -o StrictHostKeyChecking=no -i %SSH_KEY% %REMOTE_USER%@%REMOTE_HOST% \"cd /app && docker stop flask-app || true && docker rm flask-app || true && export BUILD_NUMBER=%BUILD_NUMBER% && docker-compose up -d\""
             }
         }
     }
