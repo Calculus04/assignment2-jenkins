@@ -5,7 +5,7 @@ pipeline {
         DOCKER_HUB_REPO = 'shrutisharma1152/flask-app'
         REMOTE_HOST = '13.49.75.233'  
         REMOTE_USER = 'ubuntu'        
-    }   // Added missing closing brace here
+    }
     
     stages {
         stage('Checkout') {
@@ -41,8 +41,8 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'remote-server-ssh',
                                                  keyFileVariable: 'SSH_KEY')]) {
-                    bat "scp -i %SSH_KEY% docker-compose.yml %REMOTE_USER%@%REMOTE_HOST%:/app"
-                    bat "ssh -i %SSH_KEY% %REMOTE_USER%@%REMOTE_HOST% \"cd /app && docker-compose up -d\""
+                    bat "scp -o StrictHostKeyChecking=no -i %SSH_KEY% docker-compose.yml %REMOTE_USER%@%REMOTE_HOST%:/app"
+                    bat "ssh -o StrictHostKeyChecking=no -i %SSH_KEY% %REMOTE_USER%@%REMOTE_HOST% \"cd /app && docker-compose up -d\""
                 }
             }
         }
