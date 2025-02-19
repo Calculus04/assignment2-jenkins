@@ -5,6 +5,7 @@ pipeline {
         DOCKER_HUB_REPO = 'shrutisharma1152/flask-app'
         REMOTE_HOST = '13.49.75.233'  
         REMOTE_USER = 'ubuntu'        
+    }   // Added missing closing brace here
     
     stages {
         stage('Checkout') {
@@ -46,5 +47,4 @@ pipeline {
             }
         }
     }
-}
 }
